@@ -1,14 +1,13 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+#include "comboboxDelegate.h"
 #include "previewdialog.h"
 
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
-
-// TODO: Change the Empty column to a checkbox or a combobox
 
 MainWindow::MainWindow(QWidget *parent, QString qrcFile)
     : QMainWindow(parent), ui(new Ui::MainWindow), qrcFile(qrcFile) {
@@ -20,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent, QString qrcFile)
     ui->qrcTreeView->setAnimated(true);
     ui->qrcTreeView->setSelectionMode(QTreeView::ExtendedSelection);
     ui->qrcTreeView->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+    ui->qrcTreeView->setItemDelegateForColumn(2, new ComboBoxDelegate(this));
+    ui->statusbar->setFont(QFont("Microsoft YaHei UI", 11));
     if (!qrcFile.isEmpty()) {
         loadQrcFile(qrcFile);
     } else {
@@ -89,7 +90,9 @@ void MainWindow::do_actionSave_triggered() {
     qrcParser->setPrefixes(newPrefixes);
     qrcParser->writeToFile();
     setWindowTitle(windowTitle().remove('*'));
-    saved = true;
+    saved        = true;
+    int fileSize = QFileInfo(qrcFile).size();
+    ui->statusbar->showMessage(tr("File %1 written [%2B]").arg(qrcFile).arg(fileSize), 2000);
 }
 
 void MainWindow::do_actionNew_triggered() {
@@ -102,7 +105,8 @@ void MainWindow::do_actionNew_triggered() {
     }
     qrcParser = new QrcParser(qrcFile);
     qrcModel->clear();
-    this->setWindowTitle(tr("QRC Editor - %1").arg(qrcFile));
+    this->setWindowTitle(tr("QRC Editor - %1*").arg(qrcFile));
+    saved = false;
     qrcModel->setHorizontalHeaderLabels(QStringList() << "File"
                                                       << "Alias"
                                                       << "Empty");
@@ -187,6 +191,14 @@ void MainWindow::do_addPrefixAction_triggered() {
     if (!prefix.startsWith('/')) {
         prefix = "/" + prefix;
     }
+    int rowCount = qrcModel->rowCount();
+    for (int i = 0; i < rowCount; i++) {
+        if (qrcModel->item(i, 0)->text() == prefix) {
+            QMessageBox::critical(this, tr("Error"), tr("Prefix already exists"));
+            return;
+        }
+    }
+
     QStandardItem *item = new QStandardItem(prefix);
     qrcModel->appendRow(item);
     do_qrcModel_dataChengd();
@@ -284,6 +296,7 @@ void MainWindow::loadQrcFile(QString fileName) {
     ui->actionRemove_prefix->setEnabled(true);
     ui->actionSave->setEnabled(true);
     saved = true;
+    ui->statusbar->showMessage(tr("File %1 loaded").arg(fileName), 2000);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {

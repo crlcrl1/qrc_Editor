@@ -30,6 +30,7 @@ PreviewDialog::PreviewDialog(QWidget *parent, QString file)
             QTextStream in(&fileObj);
             in.setAutoDetectUnicode(true);
             ui->textEdit->setPlainText(in.readAll());
+            ui->textEdit->setReadOnly(true);
             fileObj.close();
         }
     } else {

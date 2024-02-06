@@ -17,20 +17,25 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Xml)
 find_package(Qt6 REQUIRED COMPONENTS Gui)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 set(PROJECT_SOURCES
     main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    previewdialog.cpp
-    previewdialog.h
-    previewdialog.ui
-    qrc_parser.cpp
-    qrc_parser.h
-    qrc_prefix.cpp
-    qrc_prefix.h
-    qrc_file.cpp
-    qrc_file.h)
+    src/mainwindow.cpp
+    include/mainwindow.h
+    src/mainwindow.ui
+    src/previewdialog.cpp
+    include/previewdialog.h
+    src/previewdialog.ui
+    src/comboboxDelegate.cpp
+    include/comboboxDelegate.h
+    src/parser/qrc_parser.cpp
+    include/qrc_parser.h
+    src/parser/qrc_prefix.cpp
+    include/qrc_prefix.h
+    src/parser/qrc_file.cpp
+    include/qrc_file.h
+    resource/icon.rc)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(qrc_Editor MANUAL_FINALIZATION ${PROJECT_SOURCES})
