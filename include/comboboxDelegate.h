@@ -2,7 +2,6 @@
 #define COMBOBOXDELEGATE_H
 
 #include <QStyledItemDelegate>
-#include <qtmetamacros.h>
 
 class ComboBoxDelegate : public QStyledItemDelegate {
     Q_OBJECT

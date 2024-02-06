@@ -36,6 +36,7 @@ PreviewDialog::PreviewDialog(QWidget *parent, QString file)
     } else {
         image = nullptr;
         QMessageBox::warning(this, tr("Preview"), tr("The file is not supported"));
+        this->close();
     }
     setMinimumSize(400, 300);
 }

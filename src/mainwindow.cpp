@@ -280,6 +280,10 @@ void MainWindow::loadQrcFile(QString fileName) {
             QrcPrefix prefix    = qrcPrefixes.at(i);
             QStandardItem *item = new QStandardItem(prefix.getPrefix());
             qrcModel->setItem(i, 0, item);
+            QStandardItem *temp = new QStandardItem("");
+            temp->setEditable(false);
+            qrcModel->setItem(i, 1, temp);
+            qrcModel->setItem(i, 2, temp->clone());
             int rowCount = prefix.getFiles().size();
             for (int j = 0; j < rowCount; j++) {
                 QrcFile file             = prefix.getFiles().at(j);
