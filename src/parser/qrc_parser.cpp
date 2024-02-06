@@ -2,9 +2,7 @@
 
 #include <QFileInfo>
 #include <QMessageBox>
-#include <qdom.h>
 #include <qfileinfo.h>
-#include <qlist.h>
 
 QrcParser::QrcParser(QString qrcFilePath) {
     // Prepare the qrc file
@@ -17,12 +15,14 @@ QrcParser::QrcParser(QString qrcFilePath) {
         this->ready = true;
         return;
     }
+
+    QFileInfo qrcFileInfo = QFileInfo(qrcFilePath);
     if (!this->qrcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::critical(NULL, "Error", "Could not open " + qrcFilePath + " for reading.");
         return;
     }
 
-    if (!this->qrcDoc.setContent(&this->qrcFile)) {
+    if (qrcFileInfo.size() != 0 && !this->qrcDoc.setContent(&this->qrcFile)) {
         QMessageBox::critical(NULL, "Error",
                               "Your file " + qrcFilePath + " is not a valid qrc file.");
         this->qrcFile.close();
