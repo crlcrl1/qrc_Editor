@@ -34,6 +34,9 @@ QrcParser::QrcParser(QString qrcFilePath) {
         QDomElement root = this->qrcDoc.createElement("RCC");
         this->qrcDoc.appendChild(root);
         this->ready = true;
+        if (qrcFileInfo.size() == 0) {
+            this->qrcFile.close();
+        }
         return;
     }
 

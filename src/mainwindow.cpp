@@ -41,9 +41,11 @@ MainWindow::MainWindow(QWidget *parent, QString qrcFile)
     connect(ui->qrcTreeView, &QTreeView::customContextMenuRequested, this,
             &MainWindow::do_qrcTreeView_menu);
 
-    ui->actionAdd_prefix->setEnabled(false);
-    ui->actionRemove_prefix->setEnabled(false);
-    ui->actionSave->setEnabled(false);
+    if (qrcFile.isEmpty()) {
+        ui->actionAdd_prefix->setEnabled(false);
+        ui->actionRemove_prefix->setEnabled(false);
+        ui->actionSave->setEnabled(false);
+    }
 }
 
 MainWindow::~MainWindow() {
