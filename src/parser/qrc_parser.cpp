@@ -1,8 +1,8 @@
 #include "qrc_parser.h"
 
+#include <QDir>
 #include <QFileInfo>
 #include <QMessageBox>
-#include <qfileinfo.h>
 
 QrcParser::QrcParser(QString qrcFilePath) {
     // Prepare the qrc file
@@ -206,4 +206,26 @@ QString QrcParser::getFileName() const {
 void QrcParser::setFileName(QString qrcFilePath) {
     this->qrcFilePath = qrcFilePath;
     this->qrcFile.setFileName(qrcFilePath);
+}
+
+bool QrcParser::checkFilesExist() const {
+    QList<QrcPrefix> prefixes = this->getPrefixes();
+    int prefixesCount         = prefixes.size();
+    for (int i = 0; i < prefixesCount; ++i) {
+        QrcPrefix prefix = prefixes.at(i);
+        int filesCount   = prefix.getFiles().size();
+        for (int j = 0; j < filesCount; ++j) {
+            QrcFile file         = prefix.getFiles().at(j);
+            QString filePath     = file.getFilePath();
+            QDir qrcFileDir      = QFileInfo(qrcFilePath).dir();
+            QString absolutePath = QFileInfo(filePath).absoluteFilePath();
+            if (!QFileInfo::exists(absolutePath)) {
+                QMessageBox::critical(NULL, "Error",
+                                      "The file " + QDir::cleanPath(absolutePath) +
+                                          " does not exist.");
+                return false;
+            }
+        }
+    }
+    return true;
 }

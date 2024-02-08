@@ -62,6 +62,8 @@ public:
 
     void setFileName(QString qrcFilePath);
 
+    bool checkFilesExist() const;
+
 private:
     QString qrcFilePath;
     QFile qrcFile;

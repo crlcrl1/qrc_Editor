@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <qmessagebox.h>
 
 MainWindow::MainWindow(QWidget *parent, QString qrcFile)
     : QMainWindow(parent), ui(new Ui::MainWindow), qrcFile(qrcFile) {
@@ -41,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent, QString qrcFile)
     connect(ui->qrcTreeView, &QTreeView::customContextMenuRequested, this,
             &MainWindow::do_qrcTreeView_menu);
 
-    if (qrcFile.isEmpty()) {
+    if (qrcFile.isEmpty() || !qrcParser->isReady()) {
         ui->actionAdd_prefix->setEnabled(false);
         ui->actionRemove_prefix->setEnabled(false);
         ui->actionSave->setEnabled(false);
@@ -90,6 +91,14 @@ void MainWindow::do_actionSave_triggered() {
         }
     }
     qrcParser->setPrefixes(newPrefixes);
+    if (!qrcParser->checkFilesExist()) {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "QRC Editor", "Some files do not exist. Save anyway?",
+                                      QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::No) {
+            return;
+        }
+    }
     qrcParser->writeToFile();
     setWindowTitle(windowTitle().remove('*'));
     saved        = true;
@@ -133,7 +142,7 @@ void MainWindow::do_qrcModel_dataChengd() {
 }
 
 void MainWindow::do_qrcTreeView_menu(const QPoint &pos) {
-    if (qrcFile.isEmpty()) {
+    if (qrcFile.isEmpty() || !qrcParser->isReady()) {
         return;
     }
     QMenu menu(this);
@@ -271,10 +280,10 @@ void MainWindow::loadQrcFile(QString fileName) {
     qrcParser = new QrcParser(fileName);
     qrcFile   = fileName;
     qrcModel->clear();
-    qrcModel->setHorizontalHeaderLabels(QStringList() << "File"
-                                                      << "Alias"
-                                                      << "Empty");
     if (qrcParser->isReady()) {
+        qrcModel->setHorizontalHeaderLabels(QStringList() << "File"
+                                                          << "Alias"
+                                                          << "Empty");
         qrcPrefixes = qrcParser->getPrefixes();
         for (int i = 0; i < qrcPrefixes.size(); i++) {
             QrcPrefix prefix    = qrcPrefixes.at(i);
@@ -296,13 +305,13 @@ void MainWindow::loadQrcFile(QString fileName) {
         ui->qrcTreeView->expandAll();
         ui->qrcTreeView->setColumnWidth(0, 400);
         ui->qrcTreeView->setColumnWidth(1, 300);
+        this->setWindowTitle(tr("QRC Editor - %1").arg(fileName));
+        ui->actionAdd_prefix->setEnabled(true);
+        ui->actionRemove_prefix->setEnabled(true);
+        ui->actionSave->setEnabled(true);
+        saved = true;
+        ui->statusbar->showMessage(tr("File %1 loaded").arg(fileName), 2000);
     }
-    this->setWindowTitle(tr("QRC Editor - %1").arg(fileName));
-    ui->actionAdd_prefix->setEnabled(true);
-    ui->actionRemove_prefix->setEnabled(true);
-    ui->actionSave->setEnabled(true);
-    saved = true;
-    ui->statusbar->showMessage(tr("File %1 loaded").arg(fileName), 2000);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
