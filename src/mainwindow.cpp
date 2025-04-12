@@ -7,10 +7,9 @@
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QMessageBox>
 #include <qmessagebox.h>
 
-MainWindow::MainWindow(QWidget *parent, QString qrcFile)
+MainWindow::MainWindow(QWidget *parent, const QString &qrcFile)
     : QMainWindow(parent), ui(new Ui::MainWindow), qrcFile(qrcFile) {
     ui->setupUi(this);
     setWindowTitle("QRC Editor");
@@ -25,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent, QString qrcFile)
     if (!qrcFile.isEmpty()) {
         loadQrcFile(qrcFile);
     } else {
-        qrcParser = NULL;
+        qrcParser = nullptr;
     }
     saved = true;
 
@@ -51,9 +50,7 @@ MainWindow::MainWindow(QWidget *parent, QString qrcFile)
 
 MainWindow::~MainWindow() {
     delete ui;
-    if (qrcParser) {
-        delete qrcParser;
-    }
+    delete qrcParser;
 }
 
 void MainWindow::do_actionOpen_triggered() {
@@ -62,9 +59,7 @@ void MainWindow::do_actionOpen_triggered() {
     if (fileName.isEmpty()) {
         return;
     }
-    if (qrcParser) {
-        delete qrcParser;
-    }
+    delete qrcParser;
     loadQrcFile(fileName);
 }
 
@@ -92,24 +87,22 @@ void MainWindow::do_actionSave_triggered() {
     }
     qrcParser->setPrefixes(newPrefixes);
     if (!qrcParser->checkFilesExist()) {
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "QRC Editor", "Some files do not exist. Save anyway?",
-                                      QMessageBox::Yes | QMessageBox::No);
+        const auto reply =
+            QMessageBox::question(this, "QRC Editor", "Some files do not exist. Save anyway?",
+                                  QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::No) {
             return;
         }
     }
     qrcParser->writeToFile();
     setWindowTitle(windowTitle().remove('*'));
-    saved        = true;
-    int fileSize = QFileInfo(qrcFile).size();
+    saved           = true;
+    size_t fileSize = QFileInfo(qrcFile).size();
     ui->statusbar->showMessage(tr("File %1 written [%2B]").arg(qrcFile).arg(fileSize), 2000);
 }
 
 void MainWindow::do_actionNew_triggered() {
-    if (qrcParser) {
-        delete qrcParser;
-    }
+    delete qrcParser;
     qrcFile = QFileDialog::getSaveFileName(this, tr("New QRC File"), "", tr("QRC Files (*.qrc)"));
     if (qrcFile.isEmpty()) {
         return;
@@ -151,9 +144,9 @@ void MainWindow::do_qrcTreeView_menu(const QPoint &pos) {
     QModelIndex parentIndex = index.parent();
     if (index.isValid()) {
         if (parentIndex.isValid()) {
-            QAction *removeFileAction = new QAction("Remove File", &menu);
-            QAction *addFileAction    = new QAction("Add File", &menu);
-            QAction *previewAction    = new QAction("Preview", &menu);
+            auto *removeFileAction = new QAction("Remove File", &menu);
+            auto *addFileAction    = new QAction("Add File", &menu);
+            auto *previewAction    = new QAction("Preview", &menu);
             connect(previewAction, &QAction::triggered, this,
                     &MainWindow::do_actionPreview_triggered);
             connect(addFileAction, &QAction::triggered, this,
@@ -164,9 +157,9 @@ void MainWindow::do_qrcTreeView_menu(const QPoint &pos) {
             menu.addAction(removeFileAction);
             menu.addAction(previewAction);
         } else {
-            QAction *removePrefixAction = new QAction("Remove Prefix", &menu);
-            QAction *addPrefixAction    = new QAction("Add Prefix", &menu);
-            QAction *addFileAction      = new QAction("Add File", &menu);
+            auto *removePrefixAction = new QAction("Remove Prefix", &menu);
+            auto *addPrefixAction    = new QAction("Add Prefix", &menu);
+            auto *addFileAction      = new QAction("Add File", &menu);
             connect(addFileAction, &QAction::triggered, this,
                     &MainWindow::do_addFileAction_triggered);
             connect(removePrefixAction, &QAction::triggered, this,
@@ -178,7 +171,7 @@ void MainWindow::do_qrcTreeView_menu(const QPoint &pos) {
             menu.addAction(removePrefixAction);
         }
     } else {
-        QAction *addPrefixAction = new QAction("Add Prefix", &menu);
+        auto *addPrefixAction = new QAction("Add Prefix", &menu);
         connect(addPrefixAction, &QAction::triggered, this,
                 &MainWindow::do_addPrefixAction_triggered);
         menu.addAction(addPrefixAction);
@@ -187,7 +180,7 @@ void MainWindow::do_qrcTreeView_menu(const QPoint &pos) {
 }
 
 void MainWindow::do_removePrefixAction_triggered() {
-    QModelIndex index = ui->qrcTreeView->currentIndex();
+    const QModelIndex index = ui->qrcTreeView->currentIndex();
     if (index.isValid()) {
         qrcModel->removeRow(index.row());
         do_qrcModel_dataChengd();
@@ -210,7 +203,7 @@ void MainWindow::do_addPrefixAction_triggered() {
         }
     }
 
-    QStandardItem *item = new QStandardItem(prefix);
+    auto *item = new QStandardItem(prefix);
     qrcModel->appendRow(item);
     do_qrcModel_dataChengd();
 }
@@ -238,9 +231,9 @@ void MainWindow::do_addFileAction_triggered() {
             }
             filePath = QrcParser::calculateRelativePath(qrcFile, filePath);
             if (!filePath.isEmpty()) {
-                QStandardItem *fileItem  = new QStandardItem(filePath);
-                QStandardItem *aliasItem = new QStandardItem("");
-                QStandardItem *emptyItem = new QStandardItem("false");
+                auto *fileItem  = new QStandardItem(filePath);
+                auto *aliasItem = new QStandardItem("");
+                auto *emptyItem = new QStandardItem("false");
                 item->appendRow(QList<QStandardItem *>() << fileItem << aliasItem << emptyItem);
             }
             ui->qrcTreeView->expand(index);
@@ -258,7 +251,7 @@ void MainWindow::do_removeFileAction_triggered() {
 }
 
 void MainWindow::do_actionPreview_triggered() {
-    QModelIndex index = ui->qrcTreeView->currentIndex();
+    const QModelIndex index = ui->qrcTreeView->currentIndex();
     if (index.isValid()) {
         QModelIndex parentIndex = index.parent();
         if (parentIndex.isValid()) {
@@ -270,13 +263,13 @@ void MainWindow::do_actionPreview_triggered() {
                                       tr("File not found: %1").arg(absoluteFilePath));
                 return;
             }
-            PreviewDialog *previewDialog = new PreviewDialog(this, absoluteFilePath);
+            auto *previewDialog = new PreviewDialog(this, absoluteFilePath);
             previewDialog->show();
         }
     }
 }
 
-void MainWindow::loadQrcFile(QString fileName) {
+void MainWindow::loadQrcFile(const QString &fileName) {
     qrcParser = new QrcParser(fileName);
     qrcFile   = fileName;
     qrcModel->clear();
@@ -286,19 +279,19 @@ void MainWindow::loadQrcFile(QString fileName) {
                                                           << "Empty");
         qrcPrefixes = qrcParser->getPrefixes();
         for (int i = 0; i < qrcPrefixes.size(); i++) {
-            QrcPrefix prefix    = qrcPrefixes.at(i);
-            QStandardItem *item = new QStandardItem(prefix.getPrefix());
+            QrcPrefix prefix = qrcPrefixes.at(i);
+            auto *item       = new QStandardItem(prefix.getPrefix());
             qrcModel->setItem(i, 0, item);
-            QStandardItem *temp = new QStandardItem("");
+            auto *temp = new QStandardItem("");
             temp->setEditable(false);
             qrcModel->setItem(i, 1, temp);
             qrcModel->setItem(i, 2, temp->clone());
-            int rowCount = prefix.getFiles().size();
+            size_t rowCount = prefix.getFiles().size();
             for (int j = 0; j < rowCount; j++) {
-                QrcFile file             = prefix.getFiles().at(j);
-                QStandardItem *fileItem  = new QStandardItem(file.getFilePath());
-                QStandardItem *aliasItem = new QStandardItem(file.getAlias());
-                QStandardItem *emptyItem = new QStandardItem(file.isEmpty() ? "true" : "false");
+                QrcFile file    = prefix.getFiles().at(j);
+                auto *fileItem  = new QStandardItem(file.getFilePath());
+                auto *aliasItem = new QStandardItem(file.getAlias());
+                auto *emptyItem = new QStandardItem(file.isEmpty() ? "true" : "false");
                 item->appendRow(QList<QStandardItem *>() << fileItem << aliasItem << emptyItem);
             }
         }
@@ -316,9 +309,9 @@ void MainWindow::loadQrcFile(QString fileName) {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     if (!saved) {
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "QRC Editor", "Do you want to save changes?",
-                                      QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+        const auto reply =
+            QMessageBox::question(this, "QRC Editor", "Do you want to save changes?",
+                                  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
         if (reply == QMessageBox::Yes) {
             do_actionSave_triggered();
         } else if (reply == QMessageBox::Cancel) {

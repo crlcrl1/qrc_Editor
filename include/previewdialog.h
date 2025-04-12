@@ -13,16 +13,16 @@ class PreviewDialog : public QDialog {
     Q_OBJECT
 
 public:
-    PreviewDialog(QWidget *parent = nullptr, QString file = "");
-    ~PreviewDialog();
+    explicit PreviewDialog(QWidget *parent = nullptr, const QString &file = "");
+    ~PreviewDialog() override;
 
 private:
     Ui::PreviewDialog *ui;
 
     QImage *image;
 
-    bool isTextFile(QString filePath);
-    bool isImageFile(QString filePath);
+    static bool isTextFile(const QString &filePath);
+    static bool isImageFile(const QString &filePath);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

@@ -1,7 +1,6 @@
 #include "previewdialog.h"
 #include "./ui_previewdialog.h"
 
-#include <QFile>
 #include <QFileInfo>
 #include <QImage>
 #include <QImageReader>
@@ -9,12 +8,12 @@
 #include <QTextStream>
 #include <qnamespace.h>
 
-PreviewDialog::PreviewDialog(QWidget *parent, QString file)
+PreviewDialog::PreviewDialog(QWidget *parent, const QString &file)
     : QDialog(parent), ui(new Ui::PreviewDialog) {
     ui->setupUi(this);
     setWindowTitle(tr("Preview - %1").arg(file));
     setAttribute(Qt::WA_DeleteOnClose);
-    if (!QFileInfo(file).exists()) {
+    if (!QFileInfo::exists(file)) {
         close();
     }
 
@@ -43,12 +42,10 @@ PreviewDialog::PreviewDialog(QWidget *parent, QString file)
 
 PreviewDialog::~PreviewDialog() {
     delete ui;
-    if (image != nullptr) {
-        delete image;
-    }
+    delete image;
 }
 
-bool PreviewDialog::isTextFile(QString filePath) {
+bool PreviewDialog::isTextFile(const QString &filePath) {
     if (isImageFile(filePath)) {
         return false;
     }
@@ -56,10 +53,9 @@ bool PreviewDialog::isTextFile(QString filePath) {
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream in(&file);
         in.setAutoDetectUnicode(true);
-        QString line;
         int lineCount = 0;
         while (!in.atEnd()) {
-            line = in.readLine();
+            QString line = in.readLine();
             lineCount++;
             if (lineCount > 50) {
                 break;
@@ -76,7 +72,7 @@ bool PreviewDialog::isTextFile(QString filePath) {
     return false;
 }
 
-bool PreviewDialog::isImageFile(QString filePath) {
+bool PreviewDialog::isImageFile(const QString &filePath) {
     return QImageReader::supportedImageFormats().contains(
         QFileInfo(filePath).suffix().toLower().toLatin1());
 }

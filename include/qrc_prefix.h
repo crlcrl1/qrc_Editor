@@ -1,8 +1,6 @@
 #ifndef QRC_PREFIX_H
 #define QRC_PREFIX_H
 
-#include <QList>
-#include <QString>
 #include <QStringList>
 
 #include "qrc_file.h"
@@ -10,7 +8,7 @@
 class QrcPrefix {
 public:
     QrcPrefix();
-    QrcPrefix(const QString &prefix);
+    explicit QrcPrefix(const QString &prefix);
     virtual ~QrcPrefix();
     QString getPrefix() const;
     void setPrefix(const QString &value);

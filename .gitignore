@@ -73,3 +73,6 @@ CMakeLists.txt.user*
 # CMake generated files
 Release/
 Debug/
+
+cmake-build-*
+.idea

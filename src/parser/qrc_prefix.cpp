@@ -1,14 +1,12 @@
 #include "qrc_prefix.h"
 
-QrcPrefix::QrcPrefix() {
-}
+QrcPrefix::QrcPrefix() = default;
 
 QrcPrefix::QrcPrefix(const QString &prefix) {
     this->prefix = prefix;
 }
 
-QrcPrefix::~QrcPrefix() {
-}
+QrcPrefix::~QrcPrefix() = default;
 
 QString QrcPrefix::getPrefix() const {
     return this->prefix;

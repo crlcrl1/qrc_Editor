@@ -1,13 +1,12 @@
 #include "qrc_file.h"
 
-QrcFile::QrcFile(QString filePath, QString alias, bool empty) {
+QrcFile::QrcFile(const QString &filePath, const QString &alias, bool empty) {
     this->filePath = filePath;
     this->alias    = alias;
     this->empty    = empty;
 }
 
-QrcFile::~QrcFile() {
-}
+QrcFile::~QrcFile() = default;
 
 QString QrcFile::getFilePath() const {
     return this->filePath;
@@ -17,7 +16,7 @@ QString QrcFile::getAlias() const {
     return this->alias;
 }
 
-void QrcFile::setAlias(QString alias) {
+void QrcFile::setAlias(const QString &alias) {
     this->alias = alias;
 }
 

@@ -17,8 +17,8 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr, QString qrcFile = "");
-    ~MainWindow();
+    explicit MainWindow(QWidget *parent = nullptr, const QString &qrcFile = "");
+    ~MainWindow() override;
 
 private:
     Ui::MainWindow *ui;
@@ -29,7 +29,7 @@ private:
 
     bool saved;
 
-    void loadQrcFile(QString fileName);
+    void loadQrcFile(const QString &fileName);
 
 public slots:
     void do_actionOpen_triggered();

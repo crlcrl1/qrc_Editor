@@ -9,7 +9,7 @@
 
 class QrcParser {
 public:
-    QrcParser(QString qrcFilePath);
+    QrcParser(const QString &qrcFilePath);
     QrcParser();
     virtual ~QrcParser();
 
@@ -21,7 +21,8 @@ public:
      * @param alias The alias to use for the file, if "" then no alias is used.
      * @param empty If true, the file will be added as an empty file.
      */
-    void addFile(QString prefix, QString filePath, QString alias = "", bool empty = false);
+    void addFile(const QString &prefix, const QString &filePath, const QString &alias = "",
+                 bool empty = false);
 
     /**
      * @brief A static method to calculate the relative path between two files.
@@ -30,7 +31,7 @@ public:
      * @param targetFile The absolute path to the target file.
      * @return The relative path from the base file to the target file.
      */
-    static QString calculateRelativePath(QString baseFile, QString targetFile);
+    static QString calculateRelativePath(const QString &baseFile, const QString &targetFile);
 
     /**
      * @brief Write the changes to the qrc file.
@@ -60,7 +61,7 @@ public:
 
     QString getFileName() const;
 
-    void setFileName(QString qrcFilePath);
+    void setFileName(const QString &qrcFilePath);
 
     bool checkFilesExist() const;
 
@@ -70,7 +71,7 @@ private:
     QDomDocument qrcDoc;
     bool ready;
 
-    QDomElement findOrCreatePrefix(QDomElement root, QString prefix);
+    QDomElement findOrCreatePrefix(QDomElement &root, const QString &prefix);
 };
 
 #endif // QRC_PARSER_H

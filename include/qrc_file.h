@@ -10,13 +10,13 @@ private:
     bool empty;
 
 public:
-    QrcFile(QString filePath, QString alias = "", bool empty = false);
+    explicit QrcFile(const QString &filePath, const QString &alias = "", bool empty = false);
     virtual ~QrcFile();
     QString getFilePath() const;
     QString getAlias() const;
     bool isEmpty() const;
     void setEmpty(bool empty);
-    void setAlias(QString alias);
+    void setAlias(const QString &alias);
 };
 
 #endif /* QRC_FILE_H */

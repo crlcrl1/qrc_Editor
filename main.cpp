@@ -5,14 +5,16 @@
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
+#ifdef _WIN32
     a.setStyle("fusion");
+#endif
     if (argc > 1) {
-        QString qrcFile = argv[1];
+        const QString qrcFile = argv[1];
         MainWindow w(nullptr, qrcFile);
         w.show();
-        return a.exec();
+        return QApplication::exec();
     }
     MainWindow w;
     w.show();
-    return a.exec();
+    return QApplication::exec();
 }
