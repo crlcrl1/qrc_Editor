@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent, const QString &qrcFile)
     connect(ui->actionRemove_prefix, &QAction::triggered, this,
             &MainWindow::do_removePrefixAction_triggered);
 
-    connect(qrcModel, &QStandardItemModel::dataChanged, this, &MainWindow::do_qrcModel_dataChengd);
+    connect(qrcModel, &QStandardItemModel::dataChanged, this, &MainWindow::do_qrcModel_dataChanged);
     connect(ui->qrcTreeView, &QTreeView::customContextMenuRequested, this,
             &MainWindow::do_qrcTreeView_menu);
 
@@ -126,7 +126,7 @@ void MainWindow::do_actionExit_triggered() {
     close();
 }
 
-void MainWindow::do_qrcModel_dataChengd() {
+void MainWindow::do_qrcModel_dataChanged() {
     QString title = windowTitle();
     if (!title.endsWith('*')) {
         setWindowTitle(title + '*');
@@ -180,10 +180,9 @@ void MainWindow::do_qrcTreeView_menu(const QPoint &pos) {
 }
 
 void MainWindow::do_removePrefixAction_triggered() {
-    const QModelIndex index = ui->qrcTreeView->currentIndex();
-    if (index.isValid()) {
+    if (const QModelIndex index = ui->qrcTreeView->currentIndex(); index.isValid()) {
         qrcModel->removeRow(index.row());
-        do_qrcModel_dataChengd();
+        do_qrcModel_dataChanged();
     }
 }
 
@@ -205,7 +204,7 @@ void MainWindow::do_addPrefixAction_triggered() {
 
     auto *item = new QStandardItem(prefix);
     qrcModel->appendRow(item);
-    do_qrcModel_dataChengd();
+    do_qrcModel_dataChanged();
 }
 
 void MainWindow::do_addFileAction_triggered() {
@@ -238,7 +237,7 @@ void MainWindow::do_addFileAction_triggered() {
             }
             ui->qrcTreeView->expand(index);
         }
-        do_qrcModel_dataChengd();
+        do_qrcModel_dataChanged();
     }
 }
 
@@ -247,7 +246,7 @@ void MainWindow::do_removeFileAction_triggered() {
     if (index.isValid()) {
         qrcModel->removeRow(index.row(), index.parent());
     }
-    do_qrcModel_dataChengd();
+    do_qrcModel_dataChanged();
 }
 
 void MainWindow::do_actionPreview_triggered() {

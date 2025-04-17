@@ -37,7 +37,7 @@ public slots:
     void do_actionNew_triggered();
     void do_actionExit_triggered();
 
-    void do_qrcModel_dataChengd();
+    void do_qrcModel_dataChanged();
     void do_qrcTreeView_menu(const QPoint &pos);
 
     void do_removePrefixAction_triggered();

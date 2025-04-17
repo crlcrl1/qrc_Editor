@@ -118,9 +118,9 @@ QString QrcParser::calculateRelativePath(const QString &baseFile, const QString 
 #endif
 
     // Find the first directory that differs
-    int index     = 0;
-    int baseLen   = sepBase.size();
-    int targetLen = sepTarget.size();
+    int index        = 0;
+    size_t baseLen   = sepBase.size();
+    size_t targetLen = sepTarget.size();
     for (; index < baseLen && index < targetLen; index++) {
         if (sepBase.at(index) != sepTarget.at(index)) {
             break;
